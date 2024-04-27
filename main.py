@@ -1,23 +1,29 @@
 from tkinter import *
-import peewee
+# import peewee
 
 import gerenciamento
 from database import Logins
-from gerenciamento import *
+import gerenciamento_admin
+from gerenciamento_admin import *
+
 
 def auth():
     userconteudo = user.get()
     senhaconteudo = senha.get()
     for user_auth in Logins:
         if user_auth["usuario"] == userconteudo and user_auth["senha"] == senhaconteudo:
-            print(f'usuario {user_auth["usuario"]}, senha {user_auth["senha"]}')
             login.destroy()
-            gerenciamento.gerenc_interface()
+            if user_auth["admin"]:
+                gerenciamento_admin.gerenc_interface_admin()
+            else:
+                gerenciamento.gerenc_interface()
         else:
             a['text'] = "credenciais invalidas"
 
 
 login = Tk()
+login.title("Login")
+login.geometry("300x150")
 
 Label(login, text="Login").pack()
 user = Entry(login)
