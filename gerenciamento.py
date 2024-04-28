@@ -1,29 +1,22 @@
 from tkinter import *
-from databaseprodutos import produtos
-from databasevendas import vendasDB
+from database import Produtos, Vendas
 
 def realizar_venda():
     itemv = item.get()
     quantidadev = int(quantidade.get())
     atual_item = -1
-    for item_auth in produtos:
+    for item_auth in Produtos.select():
         atual_item += 1
-        if item_auth["item"] == itemv:
-            if item_auth["quantidade"] >= quantidadev:
-                if item_auth["quantidade"] == 0:
+        if item_auth.item == itemv:
+            if item_auth.quantidade >= quantidadev:
+                if item_auth.quantidade == 0:
                     erro2["text"] = "Produto Indisponivel"
                 else:
-                    item_vendido = item_auth["item"]
-                    preco = item_auth["preço"]
-                    print(f"item_vendido: {item_vendido}")
-                    vendasDB.append(
-                        {"item": item_vendido, "preço": preco, "quantidade": quantidadev}
-                    )
-                    produtos[atual_item]["quantidade"] = item_auth["quantidade"] - quantidadev
+                    item_auth.quantidade = item_auth.quantidade - quantidadev
+                    item_auth.save()
+                    Vendas.create(item=item_auth.item, preco=item_auth.preco, quantidade=quantidadev)
                     gerenc.destroy()
                     venda.destroy()
-                    print(vendasDB)
-                    print(produtos)
                     gerenc_interface()
             else:
                 erro2["text"] = "Quantidade invalida"
@@ -47,9 +40,20 @@ def painel_vendas():
     Label(venda, text="Quantidade").grid(column=1, row=0)
     Button(venda, text="Atribuir Venda", command=realizar_venda).grid(column=3, row=1)
 
-
     venda.mainloop()
 
+def Historico():
+    historico = Tk()
+
+    ycount = 0.1
+
+    for prod in Vendas.select():
+        Label(historico, text=prod.item).place(relx=0.27, rely=ycount, anchor=CENTER)
+        Label(historico, text=prod.preco).place(relx=0.47, rely=ycount, anchor=CENTER)
+        Label(historico, text=prod.quantidade).place(relx=0.67, rely=ycount, anchor=CENTER)
+        ycount += 0.1
+
+    historico.mainloop()
 
 def gerenc_interface():
     global gerenc
@@ -67,15 +71,12 @@ def gerenc_interface():
     label_quantidade.place(relx=0.67, rely=0.3, anchor=CENTER)
 
     Button(gerenc, text="Realizar Venda", command=painel_vendas).pack()
+    Button(gerenc, text="Historico de Vendas", command=Historico).pack()
 
-    for prod in produtos:
-        Label(gerenc, text=prod["item"]).place(relx=0.27, rely=ycount, anchor=CENTER)
-        Label(gerenc, text=prod["preço"]).place(relx=0.47, rely=ycount, anchor=CENTER)
-        Label(gerenc, text=prod["quantidade"]).place(relx=0.67, rely=ycount, anchor=CENTER)
+    for prod in Produtos.select():
+        Label(gerenc, text=prod.item).place(relx=0.27, rely=ycount, anchor=CENTER)
+        Label(gerenc, text=prod.preco).place(relx=0.47, rely=ycount, anchor=CENTER)
+        Label(gerenc, text=prod.quantidade).place(relx=0.67, rely=ycount, anchor=CENTER)
         ycount += 0.1
-
-
-    Button(gerenc, text="Realizar Venda", command=painel_vendas).grid()
-
 
     gerenc.mainloop()

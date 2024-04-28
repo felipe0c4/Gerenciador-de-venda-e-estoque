@@ -1,19 +1,21 @@
-from tkinter import *
-
-
 import gerenciamento
-from database import Logins
 import gerenciamento_admin
 from gerenciamento_admin import *
+from database import Login
+
+Login.create(usuario="admin", senha="admin", admin=True)
+
+
+Login.create(usuario="caixa", senha="caixa", admin=False)
 
 
 def auth():
     userconteudo = user.get()
     senhaconteudo = senha.get()
-    for user_auth in Logins:
-        if user_auth["usuario"] == userconteudo and user_auth["senha"] == senhaconteudo:
+    for user_auth in Login.select():
+        if user_auth.usuario == userconteudo and user_auth.senha == senhaconteudo:
             login.destroy()
-            if user_auth["admin"]:
+            if user_auth.admin:
                 gerenciamento_admin.gerenc_interface_admin()
             else:
                 gerenciamento.gerenc_interface()
@@ -39,3 +41,4 @@ a.pack()
 Button(login, text="Click me", command=auth).pack()
 
 login.mainloop()
+
