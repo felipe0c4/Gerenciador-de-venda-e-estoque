@@ -5,9 +5,7 @@ from database import Login
 
 Login.create(usuario="admin", senha="admin", admin=True)
 
-
 Login.create(usuario="caixa", senha="caixa", admin=False)
-
 
 def auth():
     userconteudo = user.get()
@@ -18,7 +16,7 @@ def auth():
             if user_auth.admin:
                 gerenciamento_admin.gerenc_interface_admin()
             else:
-                gerenciamento.gerenc_interface()
+                gerenciamento.gerenc_interface(user_auth.usuario)
         else:
             a['text'] = "credenciais invalidas"
 
