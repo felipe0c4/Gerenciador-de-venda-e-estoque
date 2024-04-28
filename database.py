@@ -9,7 +9,6 @@ class BaseModel(Model):
     class Meta:
         database = db
 
-
 class Login(BaseModel):
     usuario = CharField()
     senha = CharField()
