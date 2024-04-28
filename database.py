@@ -23,7 +23,8 @@ class Vendas(BaseModel):
     item = CharField()
     preco = FloatField()
     quantidade = IntegerField()
-
+    vendedor = CharField()
+    data = DateField()
 
 
 db.create_tables([Login, Produtos, Vendas])
