@@ -62,8 +62,6 @@ def adicionar_item():
     Button(add, text="Adicionar", command=adicionando).place(relx=0.5, rely=0.6, anchor=CENTER)
 
 
-
-
 def gerenc_interface_admin():
     global gerenc
     gerenc = Tk()
