@@ -1,5 +1,9 @@
 from tkinter import *
 from database import Produtos, Vendas
+from datetime import datetime
+
+
+
 
 def realizar_venda():
     itemv = item.get()
@@ -14,10 +18,18 @@ def realizar_venda():
                 else:
                     item_auth.quantidade = item_auth.quantidade - quantidadev
                     item_auth.save()
-                    Vendas.create(item=item_auth.item, preco=item_auth.preco, quantidade=quantidadev)
+                    data = datetime.today().strftime("%d-%m-%Y")
+
+                    Vendas.create(
+                        item=item_auth.item,
+                        preco=item_auth.preco,
+                        quantidade=quantidadev,
+                        vendedor = user,
+                        data=data,
+                    )
                     gerenc.destroy()
                     venda.destroy()
-                    gerenc_interface()
+                    gerenc_interface(user)
             else:
                 erro2["text"] = "Quantidade invalida"
         else:
@@ -45,19 +57,29 @@ def painel_vendas():
 def Historico():
     historico = Tk()
 
-    ycount = 0.1
+    ycount = 0
+    Label(historico, text="item").grid(column=0, row=0)
+    Label(historico, text="preço").grid(column=1, row=0)
+    Label(historico, text="quantidade").grid(column=2, row=0)
+    Label(historico, text="vendedor").grid(column=3, row=0)
+    Label(historico, text="data").grid(column=4, row=0)
+
 
     for prod in Vendas.select():
-        Label(historico, text=prod.item).place(relx=0.27, rely=ycount, anchor=CENTER)
-        Label(historico, text=prod.preco).place(relx=0.47, rely=ycount, anchor=CENTER)
-        Label(historico, text=prod.quantidade).place(relx=0.67, rely=ycount, anchor=CENTER)
-        ycount += 0.1
+        ycount += 1
+        Label(historico, text=prod.item).grid(column=0, row=ycount, pady=10)
+        Label(historico, text=prod.preco).grid(column=1, row=ycount, pady=10)
+        Label(historico, text=prod.quantidade).grid(column=2, row=ycount, pady=10)
+        Label(historico, text=prod.vendedor).grid(column=3, row=ycount, pady=10)
+        Label(historico, text=prod.data).grid(column=4, row=ycount, pady=10)
+
 
     historico.mainloop()
 
-def gerenc_interface():
-    global gerenc
+def gerenc_interface(user_logado):
+    global gerenc, user
     gerenc = Tk()
+    user = user_logado
     gerenc.title("Gerenciamento")
     gerenc.geometry("500x300")
     ycount = 0.4
