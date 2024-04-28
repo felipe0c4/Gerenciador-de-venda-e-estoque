@@ -31,8 +31,6 @@ def realizar_venda():
             erro["text"] = "Produto não encontrado"
 
 
-
-
 def painel_vendas():
     global item, quantidade, erro, erro2, venda
     venda = Tk()
@@ -77,7 +75,7 @@ def gerenc_interface():
         ycount += 0.1
 
 
-    Button(gerenc, text="Realizar Venda", command=painel_vendas).place(relx=0.5, rely=ycount+1, anchor=CENTER)
+    Button(gerenc, text="Realizar Venda", command=painel_vendas).grid()
 
 
     gerenc.mainloop()

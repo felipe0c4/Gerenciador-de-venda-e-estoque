@@ -1,5 +1,5 @@
 from tkinter import *
-# import peewee
+
 
 import gerenciamento
 from database import Logins
