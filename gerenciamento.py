@@ -1,7 +1,18 @@
 from tkinter import *
 from database import Produtos, Vendas
 from datetime import datetime
+from openpyxl import Workbook
 
+wb = Workbook()
+
+ws = wb.active
+
+ws["A1"] = "item"
+ws["B1"] = "preço"
+ws["C1"] = "quantidade"
+ws["D1"] = "Total"
+ws["E1"] = "vendador"
+ws["F1"] = "data"
 
 
 
@@ -54,15 +65,41 @@ def painel_vendas():
 
     venda.mainloop()
 
+def fechamento():
+    dados = []
+
+    total_count = 0
+
+
+    for dado in Vendas.select():
+        total_count += float(dado.quantidade * dado.preco)
+        dados.append((dado.item, dado.preco, dado.quantidade, total_count,dado.vendedor, dado.data))
+        total_count -= float(dado.quantidade * dado.preco)
+
+    for linha in dados:
+        ws.append(linha)
+
+    data = datetime.today().strftime("%d-%m-%Y")
+    wb.save(f"Fechamento-{data}.xlsx")
+
+    for delete in Vendas.select():
+        delete.delete_instance()
+    historico.destroy()
+
+
 def Historico():
+    global historico
     historico = Tk()
 
-    ycount = 0
-    Label(historico, text="item").grid(column=0, row=0)
-    Label(historico, text="preço").grid(column=1, row=0)
-    Label(historico, text="quantidade").grid(column=2, row=0)
-    Label(historico, text="vendedor").grid(column=3, row=0)
-    Label(historico, text="data").grid(column=4, row=0)
+    Button(historico, text="Fechamento de Caixa", command=fechamento).grid(column=2, row=0)
+
+    ycount = 1
+    Label(historico, text="item").grid(column=0, row=1)
+    Label(historico, text="preço").grid(column=1, row=1)
+    Label(historico, text="quantidade").grid(column=2, row=1)
+    Label(historico, text="vendedor").grid(column=3, row=1)
+    Label(historico, text="data").grid(column=4, row=1)
+
 
 
     for prod in Vendas.select():
